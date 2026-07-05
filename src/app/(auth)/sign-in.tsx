@@ -9,15 +9,28 @@ import { MaxContentWidth, Spacing } from '@/constants/theme';
 import { supabase } from '@/lib/supabase';
 import { useTheme } from '@/hooks/use-theme';
 
+function getDefaultDialCode(): string {
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if (tz === 'Asia/Kolkata' || tz === 'Asia/Calcutta') return '+91';
+    if (tz.startsWith('America/')) return '+1';
+    if (tz === 'Europe/London') return '+44';
+    if (tz.startsWith('Australia/')) return '+61';
+    if (tz.startsWith('Asia/Dubai') || tz === 'Asia/Muscat') return '+971';
+  } catch {
+    // ignore
+  }
+  return '+1';
+}
+
 function toE164(raw: string): string {
-  // Keep leading + and digits only
   const digits = raw.replace(/[^\d+]/g, '');
   return digits.startsWith('+') ? digits : `+${digits}`;
 }
 
 export default function SignInScreen() {
   const theme = useTheme();
-  const [phone, setPhone] = useState('');
+  const [phone, setPhone] = useState(getDefaultDialCode);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -58,7 +71,7 @@ export default function SignInScreen() {
 
           <TextInput
             style={[styles.input, { backgroundColor: theme.backgroundElement, color: theme.text }]}
-            placeholder="+1 555 000 0000"
+            placeholder={phone.startsWith('+91') ? '+91 98765 43210' : '+1 555 000 0000'}
             placeholderTextColor={theme.textSecondary}
             keyboardType="phone-pad"
             textContentType="telephoneNumber"
