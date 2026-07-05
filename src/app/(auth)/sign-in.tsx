@@ -29,13 +29,20 @@ export default function SignInScreen() {
       return;
     }
     setLoading(true);
-    const { error: err } = await supabase.auth.signInWithOtp({ phone: formatted });
+    const { data, error: err } = await supabase.auth.signInWithOtp({ phone: formatted });
     setLoading(false);
     if (err) {
       setError(err.message);
       return;
     }
-    router.push({ pathname: '/verify', params: { phone: formatted } });
+    if (data.session) {
+      // Local dev autoconfirm: session created immediately, no OTP screen needed.
+      // (app)/_layout.tsx will check for profile and redirect to /complete-profile if needed.
+      router.replace('/');
+    } else {
+      // Production: OTP sent, navigate to verify screen.
+      router.push({ pathname: '/verify', params: { phone: formatted } });
+    }
   }
 
   return (

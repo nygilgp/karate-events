@@ -37,24 +37,13 @@ export default function VerifyScreen() {
       return;
     }
 
-    const userId = data.user?.id;
-    if (!userId) {
+    if (!data.user) {
       setError('Something went wrong. Please try again.');
       return;
     }
 
-    // Check if a profile already exists for this user
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('id')
-      .eq('id', userId)
-      .maybeSingle();
-
-    if (profile) {
-      router.replace('/');
-    } else {
-      router.replace('/complete-profile');
-    }
+    // (app)/_layout.tsx checks profile and redirects to /complete-profile if needed.
+    router.replace('/');
   }
 
   function handleCodeChange(value: string) {
