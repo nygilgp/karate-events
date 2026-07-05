@@ -31,6 +31,7 @@ export interface Database {
           expo_push_token?: string | null;
           created_at?: string;
         };
+        Relationships: [];
       };
       events: {
         Row: {
@@ -54,6 +55,7 @@ export interface Database {
           created_by?: string;
           created_at?: string;
         };
+        Relationships: [];
       };
       students: {
         Row: {
@@ -74,6 +76,7 @@ export interface Database {
           parent_id?: string | null;
           created_at?: string;
         };
+        Relationships: [];
       };
       registrations: {
         Row: {
@@ -94,6 +97,7 @@ export interface Database {
           student_id?: string;
           created_at?: string;
         };
+        Relationships: [];
       };
       courts: {
         Row: {
@@ -114,6 +118,7 @@ export interface Database {
           name?: string;
           created_at?: string;
         };
+        Relationships: [];
       };
       court_assignments: {
         Row: {
@@ -137,6 +142,7 @@ export interface Database {
           student_id?: string;
           created_at?: string;
         };
+        Relationships: [];
       };
       call_queue: {
         Row: {
@@ -169,6 +175,7 @@ export interface Database {
           called_by?: string | null;
           created_at?: string;
         };
+        Relationships: [];
       };
       coach_students: {
         Row: {
@@ -186,6 +193,7 @@ export interface Database {
           student_id?: string;
           created_at?: string;
         };
+        Relationships: [];
       };
       event_referees: {
         Row: {
@@ -203,11 +211,15 @@ export interface Database {
           referee_id?: string;
           created_at?: string;
         };
+        Relationships: [];
       };
     };
+    Views: Record<string, never>;
+    Functions: Record<string, never>;
     Enums: {
       user_role: UserRole;
       call_status: CallStatus;
     };
+    CompositeTypes: Record<string, never>;
   };
 }
