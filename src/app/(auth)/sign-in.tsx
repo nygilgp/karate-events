@@ -23,6 +23,8 @@ function getDefaultDialCode(): string {
   return '+1';
 }
 
+const SKIP_OTP = process.env.EXPO_PUBLIC_SKIP_OTP === 'true';
+
 function toE164(raw: string): string {
   const digits = raw.replace(/[^\d+]/g, '');
   return digits.startsWith('+') ? digits : `+${digits}`;
@@ -42,20 +44,30 @@ export default function SignInScreen() {
       return;
     }
     setLoading(true);
-    const { data, error: err } = await supabase.auth.signInWithOtp({ phone: formatted });
-    setLoading(false);
-    if (err) {
-      setError(err.message);
+    const { error: sendErr } = await supabase.auth.signInWithOtp({ phone: formatted });
+    if (sendErr) {
+      setLoading(false);
+      setError(sendErr.message);
       return;
     }
-    if (data.session) {
-      // Local dev autoconfirm: session created immediately, no OTP screen needed.
-      // (app)/_layout.tsx will check for profile and redirect to /complete-profile if needed.
+    if (SKIP_OTP) {
+      // Dev mode: auto-verify with the test OTP code so we never see the verify screen.
+      // Requires the phone to be listed in supabase/config.toml [auth.sms.test_otp].
+      const { error: verifyErr } = await supabase.auth.verifyOtp({
+        phone: formatted,
+        token: '123456',
+        type: 'sms',
+      });
+      setLoading(false);
+      if (verifyErr) {
+        setError(`Auto-verify failed: add ${formatted} to [auth.sms.test_otp] in config.toml`);
+        return;
+      }
       router.replace('/');
-    } else {
-      // Production: OTP sent, navigate to verify screen.
-      router.push({ pathname: '/verify', params: { phone: formatted } });
+      return;
     }
+    setLoading(false);
+    router.push({ pathname: '/verify', params: { phone: formatted } });
   }
 
   return (

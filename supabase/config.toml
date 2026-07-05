@@ -268,9 +268,10 @@ max_frequency = "5s"
 # Use pre-defined map of phone number to OTP for testing.
 # Any number maps to 123456 in local dev — no real SMS provider needed.
 [auth.sms.test_otp]
-# Key must be E.164 digits without the + sign (gotrue normalizes before lookup).
-# +10000000000 → "10000000000"
-"10000000000" = "123456"
+# Keys are E.164 digits without the leading + (gotrue strips it before lookup).
+# Add any phone numbers you want to test with. OTP is always 123456.
+"10000000000" = "123456"   # +1 000 000 0000  (US test)
+"919999999999" = "123456"  # +91 99999 99999  (India test — replace with your number)
 
 # Configure logged in session timeouts.
 # [auth.sessions]
